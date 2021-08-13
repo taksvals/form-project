@@ -1,0 +1,33 @@
+{
+    "title": "About Yourself",
+    "questions": [
+        {
+            "id": "1",
+            "type": "free-text",
+            "question": "How old are you?"
+        },
+        {
+            "id": "2",
+            "type": "date",
+            "question": "Date of birth"
+        },           
+        {
+            "id": "3",
+            "type": "dropdown-list",
+            "question": "What is your position1?",
+            "values": ["Teacher1", "Student1", "Administrator1", "Scientist1"]
+        },
+        {
+            "id": "4",
+            "type": "multiple-choice",
+            "question": "What is your position2?",
+            "values": ["Teacher2", "Student2", "Administrator2", "Scientist2"]
+        },
+        {   
+            "id": "5",
+            "type": "single-choice",
+            "question": "What is your position3?",
+            "values": ["Teacher3", "Student3", "Administrator3", "Scientist3"]
+        }
+    ]
+}
