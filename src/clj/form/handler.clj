@@ -9,57 +9,9 @@
    [compojure.route :as route]
    [ring.util.http-response :as response]
    [cheshire.core :as ch]
-   [clojure.data.json :as json-parse]))
-
-(def results (atom {:title "About Yourself"
-                    :results [{:question "How old are you?"
-                               :values {}}
-                              {:question "Date of birth"
-                               :values {}}
-                              {:question "What is your position1?"
-                               :values
-                               {:Teacher1 0
-                                :Student1 0
-                                :Administrator1 0
-                                :Scientist1 0}}
-                              {:question "What is your position2?"
-                               :values
-                               {:Teacher2 0
-                                :Student2 3
-                                :Administrator2 2
-                                :Scientist2 0}}
-                              {:question "What is your position3?"
-                               :values
-                               {:Teacher3 4
-                                :Student3 3
-                                :Administrator3 1
-                                :Scientist3 3}}]}))
-
-(defn update-results [answers]
-  (let [all-results @results
-        answers answers
-        out {}]
-    (reset! results (assoc
-                     (assoc out :title (:title all-results))
-                     :results
-                     (into [] (for [question (range 0 (count (:results all-results)))
-                                    :let [result (get (:results all-results) question)
-                                          answer ((keyword (str (inc question))) answers)
-                                          k (keyword (:answer answer))]]
-                                (if (seq (:values result))
-                                  (when k
-                                    (assoc result :values
-                                           (assoc (:values result)
-                                                  k
-                                                  (inc (k (:values result))))))
-                                  result)))))))
-
-(comment
-  (update-results 
-   {:1 {:answer "Tanya"}, 
-    :2 {:answer "2021-07-29"}, 
-    :3 {:answer "Administrator1"}, 
-    :4 {:answer "Teacher2"}, :5 {:answer ["Teacher3", "Administrator3"]}}))
+   [clojure.data.json :as json-parse]
+   
+   [form.update-result :refer [update-results results]]))
 
 (def mount-target
   [:div#app
@@ -87,9 +39,11 @@
    :headers {"Content-Type" "text/html"}
    :body (loading-page)})
 
+
+
 (defn answers-handler [request]
-  (prn (update-results (ch/generate-string (:json-params request))))
-  (json-parse/write-str @results))
+  (update-results (ch/parse-string
+                   (ch/generate-string (:json-params request)) true)))
 
 (defroutes handler
   (GET "/" [] index-handler)

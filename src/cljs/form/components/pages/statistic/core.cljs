@@ -15,13 +15,13 @@
 
 (defn statistic-page []
   (re-frame/dispatch-sync [::events/load-results])
-  (fn [] (let [results (:results @(re-frame/subscribe [::subs/data]))] 
-          [:div
+  (fn [] (let [results (:results @(re-frame/subscribe [::subs/results]))] 
+           [:div
            [:span.main
             [:h1 "Statistic"]]
            (for [result results]
              (when (seq (:values result))
-               [:div
+               [:div {:key (:question result)}
                 [:h3 (:question result)]
                 [chart
                  {:height 300

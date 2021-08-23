@@ -6,3 +6,8 @@
  ::data
  (fn [db]
    (:data db)))
+
+(re-frame/reg-sub
+ ::results
+ (fn [db]
+   (:results db)))

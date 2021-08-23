@@ -6,7 +6,7 @@
    (for [value values]
      [:div {:key value}
       [:input
-       {:type "radio"
+       {:type "checkbox"
         :id (str id value)
         :name id
         :value value}]

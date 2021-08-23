@@ -8,33 +8,36 @@
 
 (def get-by-name ["single-choice" "multiple-choice"])
 
+(defn get-answers [questions]
+  (hash-map :answers (into []
+                           (for [question questions
+                                 :let [id (:id question)]]
+                             (hash-map :answer
+                                       (if (some #{(:type question)} get-by-id)
+                                         (.-value (.getElementById js/document id))
+                                         (if (= (:type question) "single-choice")
+                                           (.-value (.querySelector js/document  (str ".form input[name='" id "']:checked")))
+                                           (into []
+                                                 (for [value (.querySelectorAll js/document  (str ".form input[name='" id "']:checked"))]
+                                                   (.-value value)))))
+                                       :question (:question question))))))
+
 (defn on-click [questions]
-  (js/console.log
-   (into {}
-         (for [question questions
-               :let [id (:id question)]]
-           (hash-map (keyword id)
-                     (hash-map :answer
-                               (if (some #{(:type question)} get-by-id)
-                                 (.-value (.getElementById js/document id))
-                                 (if (= (:type question) "multiple-choice")
-                                   (.-value (.querySelector js/document  (str ".form input[name='" id "']:checked")))
-                                   (into []
-                                         (for [value (.querySelectorAll js/document  (str ".form input[name='" id "']:checked"))]
-                                           (.-value value)))))))))))
+  (let [answers (get-answers questions)]
+    (re-frame/dispatch-sync [::events/update-results (clj->js answers)])))
 
 (defn home-page []
   (re-frame/dispatch-sync [::events/load-questions])
   (fn []
     (let [questions (:questions @(re-frame/subscribe [::subs/data]))]
-      (js/console.log questions)
      [:div.container
       [:div.form
        [:h1 "Form"]
        [:form
         (for [question questions]
           [question_item
-           {:id (:id question)
+           {:key (:id question)
+            :id (:id question)
             :type (:type question)
             :question (:question question)
             :values (:values question)}])]
