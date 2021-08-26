@@ -13,7 +13,6 @@
                   (inc (k (:values result)))
                   1))))
 
-
 (defn update-results-with-values [answer result]
   (if (= (:type result) "multiple-choice")
     (assoc result :values
@@ -37,16 +36,18 @@
 (def without-values ["free-text" "date"])
 
 (defn answer-is-required? [out result]
-  (if (:error out)
-    (assoc out :error (conj
-                       (:error out)
-                       (str "Question: "
-                            (:question result)
-                            " was required!")))
-    (assoc out :error (vector
-                       (str "Question: "
-                            (:question result)
-                            " was required!")))))
+  (if (:required result)
+    (if (:error out)
+      (assoc out :error (conj
+                         (:error out)
+                         (str "Question: "
+                              (:question result)
+                              " was required!")))
+      (assoc out :error (vector
+                         (str "Question: "
+                              (:question result)
+                              " was required!"))))
+    out))
 
 (defn generate-result-template [questions]
   (let [questions questions
@@ -63,36 +64,49 @@
 
 (def results (atom (generate-result-template (ch/parse-string (slurp "resources/form.json") true))))
 
+;; (defn update-res-2 [answers]
+;;   (map
+;;    (fn
+;;      [answer result]
+;;      ())
+;;    (:answers answers)
+;;    (:results @results)))
+
 (defn update-results [answers]
-  (reset! results (loop [out         @results
-                              answers     (:answers answers)
-                              all-results (:results @results)
-                              indexes     (range 0 (count answers))]
-                         (let [answer        (first answers)
-                               rest-answers  (rest answers)
-                               result        (first all-results)
-                               rest-results  (rest all-results)
-                               current-index (first indexes)
-                               rest-indexes (rest indexes)]
-                           (if result
-                             (if answer
-                               (if (= (:question answer) (:question result))
-                                 (recur (assoc out :results
-                                               (assoc (:results out)
-                                                      current-index
-                                                      (if (some #{(:type result)} without-values)
-                                                        (update-results-without-values (keyword (:answer answer)) result)
-                                                        (update-results-with-values answer result))))
-                                        rest-answers
-                                        rest-results
-                                        rest-indexes)
-                                 (when (:required result)
-                                   (recur (answer-is-required? out result)
-                                          rest-answers
-                                          rest-results
-                                          rest-indexes)))
-                               (recur (answer-is-required? out result)
-                                      rest-answers
-                                      rest-results
-                                      rest-indexes))
-                             out)))))
+  (reset! results (loop [out          @results
+                         answers      (:answers answers)
+                         all-results  (:results @results)
+                         indexes      (range 0 (count all-results))]
+                    (let [answer            (first answers)
+                          rest-answers      (rest answers)
+                          result            (first all-results)
+                          rest-results      (rest all-results)
+                          id                (first indexes)
+                          rest-indexes      (rest indexes)]
+                      (if result
+                        (if answer
+                          (if (= (:question answer) (:question result))
+                            (recur (assoc out :results
+                                          (assoc (:results out)
+                                                 id
+                                                 (if (some #{(:type result)} without-values)
+                                                   (update-results-without-values (keyword (:answer answer)) result)
+                                                   (update-results-with-values answer result))))
+                                   rest-answers
+                                   rest-results
+                                   rest-indexes)
+                            (recur (answer-is-required? out result)
+                                   answers
+                                   rest-results
+                                   rest-indexes))
+                          (recur (answer-is-required? out result)
+                                 answers
+                                 rest-results
+                                 rest-indexes))
+                        out)))))
+
+;; (defn update-res [answers]
+;;   (let [new-results (update-results answers)]
+;;     (if (:error new-results)
+;;       (:error new-results)
+;;       (reset! results new-results))))

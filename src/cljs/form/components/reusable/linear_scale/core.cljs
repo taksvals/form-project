@@ -1,8 +1,8 @@
 (ns form.components.reusable.linear-scale.core)
 
 (defn linear_scale [{:keys [question values]}]
-  [:div
-   [:h3 question]
+  [:div.question_item
+   [:h3.question question]
    (for [value (range (first values) (inc (second values)))]
      [:div {:key value}
       [:input

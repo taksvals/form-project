@@ -45,6 +45,16 @@
                  :on-failure [:bad-post-response]}}))
 
 (re-frame/reg-event-db
+  :process-post-response
+  (fn [db [_ response]]
+    (println "Success " response)))
+
+(re-frame/reg-event-db
+  :bad-post-response
+  (fn [_ [_ response]]
+    (println "Failure " response)))
+
+(re-frame/reg-event-db
   :success-questions
   (fn [db [_ response]]
     (assoc db :data (js->clj response))))
@@ -63,13 +73,3 @@
   :failure-results
   (fn [_ [_ response]]
     (println response)))
-
-(re-frame/reg-event-db
-  :process-post-response
-  (fn [db [_ response]]
-    (println "Success " response)))
-
-(re-frame/reg-event-db
-  :bad-post-response
-  (fn [_ [_ response]]
-    (println "Failure " response)))

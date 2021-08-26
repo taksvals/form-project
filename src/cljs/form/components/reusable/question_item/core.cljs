@@ -19,12 +19,11 @@
     "linear-scale"         linear_scale))
 
 (defn question_item [{:keys [id type question values]}]
-  [:div
-   (if values
+  (if values
      [(type-with-value-check type)
       {:id id
        :question question
        :values values}]
      [(type-check type)
       {:id id
-       :question question}])])
+       :question question}]))

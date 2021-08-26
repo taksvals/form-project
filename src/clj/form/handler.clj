@@ -39,11 +39,10 @@
    :headers {"Content-Type" "text/html"}
    :body (loading-page)})
 
-
-
 (defn answers-handler [request]
-  (update-results (ch/parse-string
-                   (ch/generate-string (:json-params request)) true)))
+  {:code 200 
+   :body (update-results (ch/parse-string
+                   (ch/generate-string (:json-params request)) true))})
 
 (defroutes handler
   (GET "/" [] index-handler)

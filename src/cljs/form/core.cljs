@@ -40,9 +40,10 @@
   (fn []
     (let [page (:current-page (session/get :route))]
       [:div
-       [:header
-        [:p [:a {:href (path-for :index)} "Home"] " | "
-         [:a {:href (path-for :statistic)} "Statistic"]]]
+       [:header.nav
+        [:ul
+         [:li [:a {:href (path-for :index)} "Home"]]
+         [:li [:a {:href (path-for :statistic)} "Statistic"]]]]
        [page]])))
 
 ;; -------------------------

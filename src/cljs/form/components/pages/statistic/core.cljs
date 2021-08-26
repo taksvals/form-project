@@ -13,9 +13,30 @@
   (into [] (for [[k v] values]
     (assoc (assoc {} :key k) :value v))))
 
+(defn count-percentage[values]
+  (loop [values values
+         sum    (reduce + (vals values))
+         out    {}]
+    (let [value (first values)
+          rest-values (rest values)]
+      (if value
+        (recur rest-values 
+               sum
+               (assoc
+                out
+                (key value)
+                (* (/ (val value) sum) 100)))
+        out))))
+
+;; (comment
+;; (count-percentage {:Teacher1 0
+;;                    :Student1 1 
+;;                    :Administrator1 2
+;;                    :Scientist1 2}))
 (defn statistic-page []
   (re-frame/dispatch-sync [::events/load-results])
   (fn [] (let [results (:results @(re-frame/subscribe [::subs/results]))] 
+           (prn results)
            [:div
            [:span.main
             [:h1 "Statistic"]]
@@ -26,6 +47,6 @@
                 [chart
                  {:height 300
                   :width 800
-                  :data (data-parse (:values result))}
+                  :data (data-parse (count-percentage (:values result)))}
                  [interval
                   {:position "key*value"}]]]))])))
