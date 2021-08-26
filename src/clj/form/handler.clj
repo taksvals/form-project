@@ -11,7 +11,7 @@
    [cheshire.core :as ch]
    [clojure.data.json :as json-parse]
    
-   [form.update-result :refer [update-results results]]))
+   [form.update-result :refer [handle-answers results]]))
 
 (def mount-target
   [:div#app
@@ -41,7 +41,7 @@
 
 (defn answers-handler [request]
   {:code 200 
-   :body (update-results (ch/parse-string
+   :body (handle-answers (ch/parse-string
                    (ch/generate-string (:json-params request)) true))})
 
 (defroutes handler
