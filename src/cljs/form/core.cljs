@@ -56,22 +56,21 @@
     (rdom/render [current-page] root-el)))
 
 (defn init! []
-  (re-frame/dispatch-sync [::events/initialize-db])
-  (re-frame/dispatch-sync [::events/load-questions])
-  (clerk/initialize!)
-  (accountant/configure-navigation!
-   {:nav-handler
-    (fn [path]
-      (let [match (reitit/match-by-path router path)
-            current-page (:name (:data  match))
-            route-params (:path-params match)]
-        (reagent/after-render clerk/after-render!)
-        (session/put! :route {:current-page (page-for current-page)
-                              :route-params route-params})
-        (clerk/navigate-page! path)
-        ))
-    :path-exists?
-    (fn [path]
-      (boolean (reitit/match-by-path router path)))})
-  (accountant/dispatch-current!)
-  (mount-root))
+   (re-frame/dispatch-sync [::events/initialize-db])
+   (re-frame/dispatch-sync [::events/load-questions])
+   (clerk/initialize!)
+   (accountant/configure-navigation!
+    {:nav-handler
+     (fn [path]
+       (let [match (reitit/match-by-path router path)
+             current-page (:name (:data  match))
+             route-params (:path-params match)]
+         (reagent/after-render clerk/after-render!)
+         (session/put! :route {:current-page (page-for current-page)
+                               :route-params route-params})
+         (clerk/navigate-page! path)))
+     :path-exists?
+     (fn [path]
+       (boolean (reitit/match-by-path router path)))})
+   (accountant/dispatch-current!)
+   (mount-root))
