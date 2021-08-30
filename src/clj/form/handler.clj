@@ -2,7 +2,6 @@
   (:require
    [reitit.ring :as reitit-ring]
    [ring.middleware.json :as json]
-   [form.middleware :refer [middleware]]
    [hiccup.page :refer [include-js include-css html5]]
    [config.core :refer [env]]
    [compojure.core :refer [defroutes GET POST]]
@@ -11,17 +10,21 @@
    [cheshire.core :as ch]
    [clojure.data.json :as json-parse]
    
-   [form.update-result :refer [handle-answers results]]))
+   [form.update-result :refer [update-results results
+                               update-results-statistic]]))
 
 (def mount-target
   [:div#app
-   [:h2 "Loading"]])
+   [:div.center
+    [:h1.title "Loading..."]
+    [:img.loading-img {:src "/gifs/loading.gif"}]]])
 
 (defn head []
   [:head
    [:meta {:charset "utf-8"}]
    [:meta {:name "viewport"
            :content "width=device-width, initial-scale=1"}]
+   [:title "Form"]
    (include-css (if (env :dev) "/css/site.css" "/css/site.min.css"))])
 
 (defn loading-page []
@@ -32,7 +35,6 @@
     (include-js "/js/app.js")
     [:script "form.core.init_BANG_()"]]))
 
-
 (defn index-handler
   [_request]
   {:status 200
@@ -40,17 +42,17 @@
    :body (loading-page)})
 
 (defn answers-handler [request]
-  {:code 200 
-   :body (handle-answers (ch/parse-string
+  {:status 200 
+   :body (update-results (ch/parse-string
                    (ch/generate-string (:json-params request)) true))})
 
 (defroutes handler
   (GET "/" [] index-handler)
-  (GET "/statistic" [] index-handler)
+  (GET "/statistic" [] )
   (GET "/questions" [] (slurp "resources/form.json"))
-  (GET "/results" [] (json-parse/write-str @results))
+  (GET "/results" [] (json-parse/write-str (update-results-statistic @results)))
   (POST "/answer" [] answers-handler)
-  (route/not-found "<h1>Page not found</h1>"))
+  (route/not-found "<h1>Oops.. Page not found</h1>"))
 
 (def app
   (-> handler
