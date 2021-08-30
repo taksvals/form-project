@@ -4,30 +4,55 @@
         {
             "id": "1",
             "type": "free-text",
-            "question": "What's your name?"
+            "question": "What's your name?",
+            "required": true
         },
         {
             "id": "2",
-            "type": "date",
-            "question": "Date of birth"
-        },           
-        {
-            "id": "3",
-            "type": "dropdown-list",
-            "question": "What is your position1?",
-            "values": ["Teacher1", "Student1", "Administrator1", "Scientist1"]
+            "type": "free-text",
+            "question": "What's your surname?",
+            "required": true
         },
         {
+            "id": "3",
+            "type": "date",
+            "question": "Date of birth",
+            "required": false
+        },           
+        {
             "id": "4",
-            "type": "multiple-choice",
-            "question": "What is your position2?",
-            "values": ["Teacher2", "Student2", "Administrator2", "Scientist2"]
+            "type": "dropdown-list",
+            "question": "Choose your gender:",
+            "values": ["Male", "Female", "Other"],
+            "required": false
         },
         {   
             "id": "5",
             "type": "single-choice",
-            "question": "What is your position3?",
-            "values": ["Teacher3", "Student3", "Administrator3", "Scientist3"]
+            "question": "What company do you work in?",
+            "values": ["Agiliway", "Astound", "WhiteLabel", "Other"],
+            "required": true
+        },
+        {
+            "id": "6",
+            "type": "single-choice",
+            "question": "Is your company a member of IT-cluster?",
+            "values": ["Yes", "No"],
+            "required": false
+        },
+        {   
+            "id": "7",
+            "type": "multiple-choice",
+            "question": "What programming languages do you know?",
+            "values": ["Clojure", "JavaScript", "Java", "C#", "C++", "Other", "None"],
+            "required": true
+        },
+        {   
+            "id": "8",
+            "type": "multiple-choice",
+            "question": "In your opinion what skills are the most important?",
+            "values": ["responsible", "organized", "fast-learner", "patient", "team-player"],
+            "required": false
         }
     ]
 }
